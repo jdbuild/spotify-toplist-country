@@ -90,7 +90,7 @@ interface Product {
   name: string;
 }
 
-function ProductRow({ product } : { product: Product }) {
+function ProductRow({ product }: { product: Product }) {
   return (
     <tr>
       <td>{product.stocked ? product.name : <span style={{ color: 'red' }}>{product.name}</span>}</td>
@@ -117,11 +117,11 @@ function ProductTable({
   onFilterTextChange,
   inStockOnly,
   onStockOnlyChange
-}: {products: any[]} & FilterTextChangeProps & FilterStockOnlyChangeProps) {
+}: { products: Product[] } & FilterTextChangeProps & FilterStockOnlyChangeProps) {
 
   const rows: React.ReactElement[] = [];
 
-  let lastCategory : string | null = null;
+  let lastCategory: string | null = null;
 
 
 
@@ -151,7 +151,7 @@ function ProductTable({
 
 
   return (
-<table>
+    <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -164,14 +164,14 @@ function ProductTable({
 
 }
 
-function SearchBar( props: SearchBarProps  ) {
-  
-  
+function SearchBar(props: SearchBarProps) {
+
+
   return (
     <form>
       <input type="text" placeholder="Search..." value={props.filterText} onChange={(e) => props.onFilterTextChange(e.target.value)} />
       <p>
-        <input type="checkbox" checked={props.inStockOnly} onChange={(e) =>props.onStockOnlyChange(e.target.checked)} />  Only show products in stock
+        <input type="checkbox" checked={props.inStockOnly} onChange={(e) => props.onStockOnlyChange(e.target.checked)} />  Only show products in stock
       </p>
     </form>
   );
@@ -185,13 +185,21 @@ function FilterableProductTable({ products }: { products: Product[] }) {
   const [inStockOnly, setInStockOnly] = useState(false);
 
 
+  const searchProps = {
+    filterText,
+    onFilterTextChange: setFilterText,
+    inStockOnly,
+    onStockOnlyChange: setInStockOnly
+  };
 
 
   return (
     <>
       <SearchBar filterText={filterText} onFilterTextChange={setFilterText} inStockOnly={inStockOnly} onStockOnlyChange={setInStockOnly} />
+
+      <SearchBar {...searchProps} />
       <ProductTable products={products} filterText={filterText} onFilterTextChange={setFilterText} inStockOnly={inStockOnly} onStockOnlyChange={setInStockOnly} />
-    <div>is checked: {inStockOnly.toString()} text: {filterText}</div>
+      <div>is checked: {inStockOnly.toString()} text: {filterText}</div>
     </>
 
   );
@@ -220,6 +228,7 @@ export default function MyApp() {
       <div className="mt-8">
         <CountryDropdown />
         <GenreDropdown selectedGenre={genre} onGenreChange={(val) => setGenre(val)} />
+        <GenreDropdown selectedGenre={genre} onGenreChange={setGenre} />
       </div>
 
 
@@ -237,9 +246,9 @@ export default function MyApp() {
 
       <FilterableProductTable products={PRODUCTS} />
 
-  <Profile />
-  <Profile />
-  <Profile />
+      <Profile />
+      <Profile />
+      <Profile />
     </div>
   );
 }
